@@ -1,46 +1,47 @@
 import React, {useEffect, useState} from "react";
 
-import './KeepersInfo.scss';
 import {getOwner} from "../../../helpers/getOwner";
 import {convert} from "../../../helpers/convert";
 
+import './KeepersInfo.scss';
+
 const KeepersInfo = ({state}) => {
+
 	const [addresses, setAddresses] = useState([])
-	useEffect(() => {
+	const calculateUserInfo = () => {
+
 		let prevArray = []
 		state.map((values) => {
-			if (!prevArray.filter((item) => item.address === values.address).length > 0) {
+
+			let checkUniqValue = !prevArray.filter((item) => item.address === values.address).length > 0
+
+			if (checkUniqValue) {
 				let allUserData = state.filter(element => element.address === values.address)
 				let allWinUserData = allUserData.filter(userData => userData.buyPrice)
 				let percentWinRate = (allWinUserData.length / allUserData.length) * 100
+				let earnWinRate = convert(allWinUserData.reduce((accumulator, currentValue) => accumulator + +currentValue.buyPrice, 0))
+				let earnStartPrices = convert(allWinUserData.reduce((accumulator, currentValue) => accumulator + +currentValue.price, 0))
+				let gas = allWinUserData.reduce((accumulator, currentValue) => accumulator + +currentValue.gas, 0)
+				let spend = (gas * 0.00000003).toFixed(4)
+				let profit = (earnWinRate - earnStartPrices) - spend
 
-				let earnWinRate = convert(allWinUserData.reduce((accumulator, currentValue) => {
-					return accumulator + +currentValue.buyPrice
-				}, 0))
-
-				let earnStartPrices = convert(allWinUserData.reduce((accumulator, currentValue) => {
-					return accumulator + +currentValue.price
-				}, 0))
-
-
-				let gas = allWinUserData.reduce((accumulator, currentValue) => {
-					return accumulator + +currentValue.gas
-				}, 0)
-
-				let spend = (gas * 0.00000003).toFixed(4) // gas
-
-				let profit = (earnWinRate - earnStartPrices) - spend// - gas
-
-				prevArray = [...prevArray,{
-					address: values.address,
-					percentWinRate,
-					earn: earnWinRate,
-					spend: spend,
-					profit: profit ? profit.toFixed(4) : profit,
-				}]
+				prevArray = [
+					...prevArray,
+					{
+						address: values.address,
+						profit: profit ? profit.toFixed(4) : profit,
+						percentWinRate,
+						earnWinRate,
+						spend,
+					}
+				]
 			}
 		})
 		setAddresses(prevArray)
+	}
+
+	useEffect(() => {
+		calculateUserInfo(state)
 	}, [state])
 
 	return (
@@ -72,7 +73,7 @@ const KeepersInfo = ({state}) => {
 						{address.percentWinRate || '0'} %
 					</div>
 					<div className='col'>
-						{address.earn || '0'} ETH
+						{address.earnWinRate || '0'} ETH
 					</div>
 					<div className='col'>
 						{address.spend || '0'} ETH

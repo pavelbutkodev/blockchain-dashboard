@@ -1,20 +1,39 @@
 import React, {useEffect, useState} from "react";
 
 import contractDate from "../../../contracts/contract";
-
-import './Dashboard.scss';
 import Table from "../../UI/Table/Table";
 import KeepersInfo from "../../UI/KeepersInfo/KeepersInfo";
 
+import './Dashboard.scss';
+
 const Dashboard = () => {
+
 	const [state, setState] = useState(contractDate)
 	const [selectValue, setSelectValue] = useState(0)
+	const optionArray = [
+		{
+			value: 0,
+			name: 'Default'
+		},
+		{
+			value: 1,
+			name: 'Last day'
+		},
+		{
+			value: 2,
+			name: 'Last week'
+		},
+		{
+			value: 3,
+			name: 'Last month'
+		}
+	]
+
 	const handleChangeSelect = (e) => {
-		const value = +e.target.value
-		setSelectValue(value)
+		setSelectValue(Number(e.target.value))
 	}
 
-	useEffect(() => {
+	const sortByTime = () => {
 		const oneDay = 86400000
 		const currentDate = Date.now()
 		switch (selectValue) {
@@ -36,16 +55,17 @@ const Dashboard = () => {
 			default:
 				break;
 		}
+	}
+
+	useEffect(() => {
+		sortByTime()
 	}, [selectValue])
 
 	return (
 		<div className='dash-content'>
 			<div className='dash-wrapper'>
 				<select name="select" onChange={handleChangeSelect}>
-					<option value={0}>Default</option>
-					<option value={1}>Last day</option>
-					<option value={2}>Last week</option>
-					<option value={3}>Last month</option>
+					{optionArray.map(({value, name}) => <option value={value}>{name}</option>)}
 				</select>
 
 				<Table state={state}/>
