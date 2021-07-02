@@ -1,0 +1,27 @@
+.dash-row {
+  display: flex;
+  border: 1px solid #000;
+  border-bottom: none;
+  height: 30px;
+  color: #000;
+
+  .col {
+    display: flex;
+    align-items: center;
+    margin-left: 30px;
+    width: 300px;
+    border-right: 1px solid #000;
+
+    &:last-child {
+      border-right: none;
+    }
+  }
+
+  .col-title {
+    font-weight: bold;
+  }
+
+  &:last-child {
+    border-bottom: 1px solid #000;
+  }
+}

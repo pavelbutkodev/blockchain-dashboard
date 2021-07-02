@@ -1,0 +1,24 @@
+.dash-content {
+  margin-top: 300px;
+  display: flex;
+  justify-content: center;
+
+  .dash-wrapper {
+    width: 600px;
+    display: flex;
+    flex-direction: column;
+
+    select {
+      height: 30px;
+      margin-bottom: 15px;
+    }
+  }
+}
+
+.keepers-info-wrapper {
+  width: 800px;
+  margin-top: 45px;
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px;
+}
